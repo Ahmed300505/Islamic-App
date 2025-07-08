@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:islamicinstapp/screens/SearchScreen.dart';
 import 'package:islamicinstapp/screens/calender.dart';
 import 'package:islamicinstapp/screens/home_page.dart';
+import 'package:islamicinstapp/screens/Forum.dart';
 import 'package:islamicinstapp/screens/user_profile.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -20,10 +21,6 @@ class CustomBottomNavBar extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: padding),
       decoration: BoxDecoration(
         color: const Color(0xFF033941),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -61,7 +58,15 @@ class CustomBottomNavBar extends StatelessWidget {
               );
             },
           ),
-          _NavBarIcon(icon: FontAwesomeIcons.comment, iconSize: iconSize),
+          _NavBarIcon(icon: FontAwesomeIcons.comment, iconSize: iconSize
+            ,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  ForumScreen()),
+              );
+            },
+          ),
           _NavBarIcon(
             icon: FontAwesomeIcons.user,
             iconSize: iconSize,

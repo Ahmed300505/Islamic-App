@@ -1,433 +1,403 @@
 import 'package:flutter/material.dart';
+import 'package:islamicinstapp/Provider/profile_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:islamicinstapp/screens/edit_profile_page.dart';
 import 'package:islamicinstapp/widgets/bottom_nav_bar.dart';
+import '../styles/colors.dart';
+import '../styles/text_styles.dart';
 
-class UserProfilePage extends StatefulWidget {
+class UserProfilePage extends StatelessWidget {
   const UserProfilePage({super.key});
 
   @override
-  State<UserProfilePage> createState() => _UserProfilePageState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ProfileProvider(),
+      child: const _UserProfileContent(),
+    );
+  }
 }
 
-class _UserProfilePageState extends State<UserProfilePage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+class _UserProfileContent extends StatelessWidget {
+  const _UserProfileContent();
 
   @override
   Widget build(BuildContext context) {
-    // Mock data - in a real app you would fetch this based on postId
-    final community = {
-      'image': 'https://images.unsplash.com/photo-1564121211835-e88c852648ab',
-      'name': 'GroundedTwinCities',
-      'description': 'A community dedicated to Islamic learning and brotherhood in the Twin Cities area.',
-      'website': 'https://groundedtwincities.com',
-      'address': '123 Islamic Center, Minneapolis, MN 55401',
-      'members': '2000',
-      'following': '36',
-      'leaders': [
-        {'name': 'Brother Ahmed', 'role': 'Imam'},
-        {'name': 'Sister Fatima', 'role': 'Organizer'},
-        {'name': 'Brother Yusuf', 'role': 'Treasurer'},
-        {'name': 'Sister Aisha', 'role': 'Event Coordinator'},
-        {'name': 'Brother Ali', 'role': 'Volunteer'},
-      ],
-      'posts': [
-        'https://images.unsplash.com/photo-1498837167922-ddd27525d352',
-        'https://images.unsplash.com/photo-1564121211835-e88c852648ab',
-        'https://images.unsplash.com/photo-1519817650390-64a93db51149',
-        'https://images.unsplash.com/photo-1541252260730-0412e8e2108e',
-        'https://images.unsplash.com/photo-1541252260730-0412e8e2108e',
-        'https://images.unsplash.com/photo-1541252260730-0412e8e2108e',
-      ],
-      'programs': [
-        'https://images.unsplash.com/photo-1498837167922-ddd27525d352',
-        'https://images.unsplash.com/photo-1564121211835-e88c852648ab',
-        'https://images.unsplash.com/photo-1519817650390-64a93db51149',
-        'https://images.unsplash.com/photo-1541252260730-0412e8e2108e',
-      ],
-    };
+    final screenSize = MediaQuery.of(context).size;
+    final horizontalPadding = screenSize.width < 350 ? 12.0 : 16.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFEFDEB),
+      backgroundColor: AppColors.profileBackground,
       bottomNavigationBar: const CustomBottomNavBar(),
-      body: DefaultTabController(
-        length: 3,
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  // COVER PHOTO
-                  Container(
-                    height: 230,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          'https://images.unsplash.com/photo-1498837167922-ddd27525d352',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-
-                  // SPACE FOR LOGO TO OVERLAP
-                  const SizedBox(height: 160),
-
-                  // COMMUNITY NAME
-                  Text(
-                    'User',
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF033941),
-                    ),
-                  ),
-                  Text(
-                    '@User300505',
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xFF033941),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Share your favourite quran verse',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF033941),
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Edit Profile Button (medium width)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const EditProfilePage()),
-                            );
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 280,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.green, width: 1.5),
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.transparent,
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Edit Profile',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-
-                        // Settings Icon
-                        Container(
-                          width: 35,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green, width: 1.5),
-                            borderRadius: BorderRadius.circular(10), // Changed from circle to radius 10
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.settings, color: Colors.green, size: 18),
-                            onPressed: () {
-                              // Handle settings tap
-                            },
-                            padding: EdgeInsets.zero,
-                          ),
-                        ),
-
-                      ],
-                    ),
-                  ),
-
-
-                  const SizedBox(height: 40),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'My Communities:',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF033941),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 160,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: (community['leaders'] as List).length,
-                      itemBuilder: (context, index) {
-                        final leader = (community['leaders'] as List)[index] as Map<String, String>;
-                        return Container(
-                          width: 90,
-                          margin: const EdgeInsets.only(right: 8),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 140,
-                                height: 90,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6D8467),
-                                  borderRadius: BorderRadius.circular(40),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    leader['name']!.split(' ').map((e) => e[0]).join(),
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF033941),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                leader['name']!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF033941),
-                                ),
-                              ),
-                              Text(
-                                leader['role']!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text(
-                          'Awliya:',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF033941),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 160,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: (community['leaders'] as List).length,
-                      itemBuilder: (context, index) {
-                        final leader = (community['leaders'] as List)[index] as Map<String, String>;
-                        return Container(
-                          width: 90,
-                          margin: const EdgeInsets.only(right: 8),
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 140,
-                                height: 90,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6D8467),
-                                  borderRadius: BorderRadius.circular(40),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    leader['name']!.split(' ').map((e) => e[0]).join(),
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF033941),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                leader['name']!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF033941),
-                                ),
-                              ),
-                              Text(
-                                leader['role']!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-
-              // PROFILE PICTURE - Positioned over image
-              Positioned(
-                top: 180, // same as before to sit at image bottom
-                left: 0,
-                right: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Consumer<ProfileProvider>(
+              builder: (context, profileProvider, _) {
+                final profileData = profileProvider.profileData;
+                return Stack(
                   children: [
-                    // Followers (left)
                     Column(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
+                        // Cover Photo
+                        _buildCoverPhoto(context, profileData['coverPhoto']),
 
-                        Text(
-                          '2000k',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            color: Color(0xFF033941),
-                          ),
-                        ),
-                        const Text(
-                          'Followers',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-
-                            color: Colors.grey,
+                        // Profile Content
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                          child: Column(
+                            children: [
+                              _buildProfileInfo(context, profileData),
+                              _buildProfileActions(context),
+                              _buildCommunitySection(
+                                  context,
+                                  'My Communities:',
+                                  profileData['communities']
+                              ),
+                              _buildCommunitySection(
+                                  context,
+                                  'Awliya:',
+                                  profileData['awliya']
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(width: 30),
-
-                    // Profile Logo
-                    Container(
-                      width: 190,
-                      height: 190,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF033941),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: const Color(0xFFFEFDEB),
-                          width: 4,
-                        ),
-                      ),
-                      child: ClipOval(
-                        child: Image.network(
-                          community['image'] as String,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 30),
-
-                    // Following (right)
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-
-                        Text(
-                          community['following'] as String,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            color: Color(0xFF033941),
-                          ),
-                        ),
-                        const Text(
-                          'Following',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Profile Stats and Image
+                    _buildProfileStatsAndImage(context, profileData),
                   ],
-                ),
-              ),
-            ],
+                );
+              },
+            ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCoverPhoto(BuildContext context, String coverPhoto) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final height = screenHeight < 600 ? 180.0 :
+    screenHeight < 700 ? 200.0 :
+    screenHeight < 800 ? 220.0 : 240.0;
+
+    return Container(
+      height: height,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(coverPhoto),
+          fit: BoxFit.cover,
         ),
       ),
     );
   }
 
-  Widget _buildStatColumn(String label, String value) {
+  Widget _buildProfileInfo(BuildContext context, Map<String, dynamic> profileData) {
     return Column(
       children: [
+        SizedBox(height: _getProfileImageSize(context) * 0.5),
         Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF033941),
+          profileData['name'],
+          style: TextStyles.profileNameText(context),
+        ),
+        SizedBox(height: _getSmallSpacing(context) / 2),
+        Text(
+          profileData['username'],
+          style: TextStyles.profileUsernameText(context),
+        ),
+        SizedBox(height: _getSmallSpacing(context)),
+        Text(
+          profileData['bio'],
+          style: TextStyles.profileBioText(context),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: _getMediumSpacing(context)),
+      ],
+    );
+  }
+
+  Widget _buildProfileActions(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: _getHorizontalPadding(context)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Edit Profile Button
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EditProfilePage()),
+                );
+              },
+              child: Container(
+                height: _getButtonHeight(context),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: AppColors.profileButtonBorder,
+                      width: 1.5
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.transparent,
+                ),
+                child: Center(
+                  child: Text(
+                    'Edit Profile',
+                    style: TextStyles.profileButtonText(context),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: _getMediumSpacing(context)),
+
+          // Settings Button
+          Container(
+            width: _getButtonHeight(context),
+            height: _getButtonHeight(context),
+            decoration: BoxDecoration(
+              border: Border.all(
+                  color: AppColors.profileButtonBorder,
+                  width: 1.5
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: IconButton(
+              icon: Icon(
+                Icons.settings,
+                color: AppColors.profileButtonBorder,
+                size: TextStyles.profileButtonText(context).fontSize! * 1.2,
+              ),
+              onPressed: () {},
+              padding: EdgeInsets.zero,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCommunitySection(BuildContext context, String title, List<dynamic> items) {
+    return Column(
+      children: [
+        SizedBox(height: _getLargeSpacing(context)),
+        // Section Title
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: _getHorizontalPadding(context)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: TextStyles.profileSectionTitleText(context),
+              ),
+            ],
           ),
         ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
+        SizedBox(height: _getSmallSpacing(context)),
+
+        // Community List
+        SizedBox(
+          height: _getCommunityItemHeight(context),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: _getHorizontalPadding(context)),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index] as Map<String, dynamic>;
+              return Container(
+                width: _getCommunityItemWidth(context),
+                margin: EdgeInsets.only(right: _getMediumSpacing(context)),
+                child: Column(
+                  children: [
+                    // Community Avatar
+                    Container(
+                      width: _getCommunityAvatarSize(context),
+                      height: _getCommunityAvatarSize(context),
+                      decoration: BoxDecoration(
+                        color: AppColors.communityAvatar,
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      child: Center(
+                        child: Text(
+                          item['initials'],
+                          style: TextStyle(
+                            fontSize: _getCommunityAvatarTextSize(context),
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.profileText,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: _getSmallSpacing(context) / 2),
+                    Text(
+                      item['name'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyles.communityNameText(context),
+                    ),
+                    Text(
+                      item['role'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyles.communityRoleText(context),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ],
     );
+  }
+
+  Widget _buildProfileStatsAndImage(BuildContext context, Map<String, dynamic> profileData) {
+    return Positioned(
+      top: _getCoverPhotoHeight(context) - (_getProfileImageSize(context) * 0.5),
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Followers
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                profileData['followers'],
+                style: TextStyles.profileStatsText(context),
+              ),
+              Text(
+                'Followers',
+                style: TextStyles.profileStatsLabelText(context),
+              ),
+            ],
+          ),
+
+          SizedBox(width: _getMediumSpacing(context) * 1.5),
+
+          // Profile Image
+          Container(
+            width: _getProfileImageSize(context),
+            height: _getProfileImageSize(context),
+            decoration: BoxDecoration(
+              color: AppColors.profileText,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.profileBackground,
+                width: _getProfileImageBorderWidth(context),
+              ),
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                profileData['profileImage'],
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          SizedBox(width: _getMediumSpacing(context) * 1.5),
+
+          // Following
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                profileData['following'],
+                style: TextStyles.profileStatsText(context),
+              ),
+              Text(
+                'Following',
+                style: TextStyles.profileStatsLabelText(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Responsive helper methods
+  double _getCoverPhotoHeight(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 180.0 :
+    screenHeight < 700 ? 200.0 :
+    screenHeight < 800 ? 220.0 : 240.0;
+  }
+
+  double _getProfileImageSize(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 100.0 :
+    screenHeight < 700 ? 130.0 :
+    screenHeight < 800 ? 150.0 : 170.0;
+  }
+
+  double _getProfileImageBorderWidth(BuildContext context) {
+    return MediaQuery.of(context).size.width < 350 ? 3.0 : 4.0;
+  }
+
+  double _getButtonHeight(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 30.0 :
+    screenHeight < 700 ? 32.0 :
+    screenHeight < 800 ? 35.0 : 38.0;
+  }
+
+  double _getCommunityItemHeight(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 120.0 :
+    screenHeight < 700 ? 140.0 :
+    screenHeight < 800 ? 160.0 : 180.0;
+  }
+
+  double _getCommunityItemWidth(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 70.0 :
+    screenHeight < 700 ? 80.0 :
+    screenHeight < 800 ? 90.0 : 100.0;
+  }
+
+  double _getCommunityAvatarSize(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 50.0 :
+    screenHeight < 700 ? 70.0 :
+    screenHeight < 800 ? 90.0 : 110.0;
+  }
+
+  double _getCommunityAvatarTextSize(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 16.0 :
+    screenHeight < 700 ? 20.0 :
+    screenHeight < 800 ? 24.0 : 28.0;
+  }
+
+  double _getHorizontalPadding(BuildContext context) {
+    return MediaQuery.of(context).size.width < 350 ? 12.0 : 16.0;
+  }
+
+  double _getSmallSpacing(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 4.0 :
+    screenHeight < 700 ? 6.0 :
+    screenHeight < 800 ? 8.0 : 10.0;
+  }
+
+  double _getMediumSpacing(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 8.0 :
+    screenHeight < 700 ? 12.0 :
+    screenHeight < 800 ? 16.0 : 20.0;
+  }
+
+  double _getLargeSpacing(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    return screenHeight < 600 ? 20.0 :
+    screenHeight < 700 ? 30.0 :
+    screenHeight < 800 ? 40.0 : 50.0;
   }
 }

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:islamicinstapp/Styles/text_styles.dart';
+import 'package:islamicinstapp/Provider/edit_profile_provider.dart';
 
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<EditProfileProvider>(context);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // Header section with background image and profile picture
           SliverAppBar(
             expandedHeight: 200.0,
             floating: false,
@@ -17,13 +21,10 @@ class EditProfilePage extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Background image
-                  Image.network(
-                    'https://images.unsplash.com/photo-1498837167922-ddd27525d352',
+                  Image.asset(
+                    'assets/images/postimage3.jpg',
                     fit: BoxFit.cover,
                   ),
-
-                  // Back button
                   Positioned(
                     top: MediaQuery.of(context).padding.top + 10,
                     left: 16,
@@ -43,17 +44,15 @@ class EditProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // Bottom curved section
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
                     child: Container(
                       height: 30,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFEFDEB),
-                        borderRadius: const BorderRadius.only(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFEFDEB),
+                        borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
                         ),
@@ -64,8 +63,6 @@ class EditProfilePage extends StatelessWidget {
               ),
             ),
           ),
-
-          // Edit profile content
           SliverToBoxAdapter(
             child: Container(
               color: const Color(0xFFFEFDEB),
@@ -73,19 +70,13 @@ class EditProfilePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(
+                  Center(
                     child: Text(
                       'Edit Profile',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF033941),
-                      ),
+                      style: TextStyles.editProfileTitleText(context),
                     ),
                   ),
                   const SizedBox(height: 24),
-
-                  // Profile picture change
                   Center(
                     child: Stack(
                       children: [
@@ -98,8 +89,8 @@ class EditProfilePage extends StatelessWidget {
                               width: 2,
                             ),
                             borderRadius: BorderRadius.circular(50),
-                            image: const DecorationImage(
-                              image: NetworkImage('https://images.unsplash.com/photo-1564121211835-e88c852648ab'),
+                            image: DecorationImage(
+                              image: AssetImage(provider.profileImage),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -107,16 +98,21 @@ class EditProfilePage extends StatelessWidget {
                         Positioned(
                           bottom: 0,
                           right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF033941),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 20,
+                          child: GestureDetector(
+                            onTap: () {
+                              // Add image picker functionality here
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF033941),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -124,18 +120,14 @@ class EditProfilePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  // Name field
-                  const Text(
+                  Text(
                     'Name',
-                    style: TextStyle(
-                      color: Color(0xFF033941),
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyles.editProfileLabelText(context),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    initialValue: 'John Doe',
+                    initialValue: provider.name,
+                    onChanged: (value) => provider.updateName(value),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -150,18 +142,14 @@ class EditProfilePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // Username field
-                  const Text(
+                  Text(
                     'Username',
-                    style: TextStyle(
-                      color: Color(0xFF033941),
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyles.editProfileLabelText(context),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    initialValue: 'johndoe',
+                    initialValue: provider.username,
+                    onChanged: (value) => provider.updateUsername(value),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -176,18 +164,14 @@ class EditProfilePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // Bio field
-                  const Text(
+                  Text(
                     'Bio',
-                    style: TextStyle(
-                      color: Color(0xFF033941),
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyles.editProfileLabelText(context),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
-                    initialValue: 'Muslim developer passionate about Islamic apps',
+                    initialValue: provider.bio,
+                    onChanged: (value) => provider.updateBio(value),
                     maxLines: 3,
                     decoration: InputDecoration(
                       filled: true,
@@ -203,14 +187,10 @@ class EditProfilePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  // Save button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => provider.saveChanges(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF033941),
                         shape: RoundedRectangleBorder(
@@ -218,12 +198,9 @@ class EditProfilePage extends StatelessWidget {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Save Changes',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyles.editProfileButtonText(context),
                       ),
                     ),
                   ),

@@ -1,237 +1,173 @@
 import 'package:flutter/material.dart';
+import 'package:islamicinstapp/Provider/umrah_links_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:islamicinstapp/screens/home_page.dart';
+import '../styles/colors.dart';
+import '../styles/text_styles.dart';
 
-class UmrahLinks extends StatefulWidget {
+class UmrahLinks extends StatelessWidget {
   const UmrahLinks({super.key});
 
   @override
-  State<UmrahLinks> createState() => _UmrahLinksState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => UmrahLinksProvider(),
+      child: const _UmrahLinksContent(),
+    );
+  }
 }
 
-class _UmrahLinksState extends State<UmrahLinks> {
-  final List<Map<String, dynamic>> umrahLinks = [
-    {'title': 'Preparation', 'selected': false},
-    {'title': 'Packing List', 'selected': false},
-    {'title': 'Travel Tips', 'selected': false},
-    {'title': 'Makkah Guide', 'selected': false},
-    {'title': 'Madinah Guide', 'selected': false},
-    {'title': 'Duas', 'selected': false},
-    {'title': 'Etiquette', 'selected': false},
-    {'title': 'Travel Tips', 'selected': false},
-    {'title': 'Makkah Guide', 'selected': false},
-    {'title': 'Madinah Guide', 'selected': false},
-    {'title': 'Duas Prayer', 'selected': false},
-    {'title': 'Etiquette', 'selected': false},
-    {'title': 'Travel Tips', 'selected': false},
-    {'title': 'Makkah Guide', 'selected': false},
-    {'title': 'Madinah Guide', 'selected': false},
-    {'title': 'Duas Prayer', 'selected': false},
-    {'title': 'Etiquette', 'selected': false},
-    {'title': 'Preparation', 'selected': false},
-    {'title': 'Packing List', 'selected': false},
-    {'title': 'Travel Tips', 'selected': false},
-    {'title': 'Makkah Guide', 'selected': false},
-    {'title': 'Madinah Guide', 'selected': false},
-    {'title': 'Duas Prayer', 'selected': false},
-    {'title': 'Etiquette', 'selected': false},
-    {'title': 'Travel Tips', 'selected': false},
-    {'title': 'Makkah Guide', 'selected': false},
-    {'title': 'Madinah Guide', 'selected': false},
-    {'title': 'Duas Prayer', 'selected': false},
-    {'title': 'Etiquette', 'selected': false},
-    {'title': 'Travel Tips', 'selected': false},
-    {'title': 'Makkah Guide', 'selected': false},
-    {'title': 'Madinah Guide', 'selected': false},
-    {'title': 'Duas Prayer', 'selected': false},
-    {'title': 'Etiquette', 'selected': false},
-  ];
+class _UmrahLinksContent extends StatelessWidget {
+  const _UmrahLinksContent();
 
-  int get selectedCount => umrahLinks.where((item) => item['selected']).length;
+  bool _isSmallScreen(BuildContext context) => MediaQuery.of(context).size.width < 375;
+  bool _isMediumScreen(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 375 &&
+          MediaQuery.of(context).size.width < 600;
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-
-    // Responsive calculations
-    final bool isSmallScreen = screenWidth < 375;
-    final bool isMediumScreen = screenWidth >= 375 && screenWidth < 600;
-    final bool isLargeScreen = screenWidth >= 600;
-
-    // Adjust values based on screen size
-    final crossAxisCount = isSmallScreen ? 2 : (isMediumScreen ? 3 : 4);
-    final buttonHeight = isSmallScreen
-        ? screenHeight * 0.06
-        : (isMediumScreen ? screenHeight * 0.055 : screenHeight * 0.05);
-    final buttonPadding = isSmallScreen ? 6.0 : (isMediumScreen ? 8.0 : 10.0);
-    final titleFontSize = isSmallScreen ? 20.0 : (isMediumScreen ? 22.0 : 24.0);
-    final descriptionFontSize = isSmallScreen ? 12.0 : (isMediumScreen ? 13.0 : 14.0);
-    final buttonFontSize = isSmallScreen ? 13.0 : (isMediumScreen ? 14.0 : 15.0);
-    final continueButtonFontSize = isSmallScreen ? 16.0 : (isMediumScreen ? 17.0 : 18.0);
+    final isSmallScreen = _isSmallScreen(context);
+    final isMediumScreen = _isMediumScreen(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFCF5DB),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFCF5DB),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Colors.black,
-              size: isSmallScreen ? 20 : (isMediumScreen ? 22 : 24)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Umrah Links',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: isSmallScreen ? 18 : (isMediumScreen ? 20 : 22),
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-            },
-            child: Text(
-              'Skip',
-              style: TextStyle(
-                color: const Color(0xFF094B4A),
-                fontWeight: FontWeight.bold,
-                fontSize: isSmallScreen ? 14 : (isMediumScreen ? 15 : 16),
-              ),
-            ),
-          ),
-        ],
-      ),
+      backgroundColor: AppColors.umrahBackground,
+      appBar: _buildAppBar(context, isSmallScreen, isMediumScreen),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
-          horizontal: isSmallScreen ? 12.0 : (isMediumScreen ? 16.0 : 24.0),
-          vertical: isSmallScreen ? 12.0 : (isMediumScreen ? 16.0 : 20.0),
+          horizontal: isSmallScreen ? 12.0 :
+          isMediumScreen ? 16.0 : 24.0,
+          vertical: isSmallScreen ? 12.0 :
+          isMediumScreen ? 16.0 : 20.0,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Interests',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: titleFontSize,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: isSmallScreen ? 4 : (isMediumScreen ? 6 : 8)),
-            Text(
-              'Select the topics you\'re interested in to get personalized Umrah resources and guidance for your spiritual journey.',
-              style: TextStyle(
-                color: const Color(0xFF094B4A),
-                fontSize: descriptionFontSize,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: isSmallScreen ? 16 : (isMediumScreen ? 20 : 24)),
-
-            SizedBox(height: isSmallScreen ? 8 : (isMediumScreen ? 10 : 12)),
-
-            // Grid of links
-            GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: isSmallScreen ? 8 : (isMediumScreen ? 10 : 12),
-                mainAxisSpacing: isSmallScreen ? 8 : (isMediumScreen ? 10 : 12),
-                childAspectRatio: isSmallScreen ? 2.8 : (isMediumScreen ? 3.0 : 3.2),
-              ),
-              itemCount: umrahLinks.length,
-              itemBuilder: (context, index) {
-                return _buildLinkButton(
-                  title: umrahLinks[index]['title']!,
-                  isSelected: umrahLinks[index]['selected'],
-                  onTap: () {
-                    if (umrahLinks[index]['selected'] || selectedCount < 4) {
-                      setState(() {
-                        umrahLinks[index]['selected'] = !umrahLinks[index]['selected'];
-                      });
-                    }
-                  },
-                  height: buttonHeight,
-                  padding: buttonPadding,
-                  fontSize: buttonFontSize,
-                );
-              },
-            ),
-
-            SizedBox(height: isSmallScreen ? screenHeight * 0.03 : (isMediumScreen ? screenHeight * 0.04 : screenHeight * 0.05)),
-
-            // Continue button (only shows when exactly 4 items are selected)
-            if (selectedCount == 4) ...[
-              Center(
-                child: SizedBox(
-                  width: isSmallScreen ? screenWidth * 0.9 : (isMediumScreen ? screenWidth * 0.85 : screenWidth * 0.8),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF094B4A),
-                      foregroundColor: Colors.white,
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        vertical: isSmallScreen ? screenHeight * 0.016 : (isMediumScreen ? screenHeight * 0.017 : screenHeight * 0.018),
-                      ),
-                    ),
-                    onPressed: () {
-                      final selectedItems = umrahLinks
-                          .where((item) => item['selected'] == true)
-                          .map((item) => item['title'])
-                          .toList();
-                      debugPrint('Selected items: $selectedItems');
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HomePage()),
-                      );
-                    },
-                    child: Text(
-                      'Continue',
-                      style: TextStyle(
-                        fontSize: continueButtonFontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: isSmallScreen ? screenHeight * 0.01 : (isMediumScreen ? screenHeight * 0.015 : screenHeight * 0.02)),
-            ],
+            _buildHeader(context, isSmallScreen, isMediumScreen),
+            SizedBox(height: isSmallScreen ? 16 :
+            isMediumScreen ? 20 : 24),
+            _buildLinksGrid(context),
+            SizedBox(height: isSmallScreen ? screenSize.height * 0.03 :
+            isMediumScreen ? screenSize.height * 0.04 :
+            screenSize.height * 0.05),
+            _buildContinueButton(context),
           ],
         ),
       ),
     );
   }
 
+  PreferredSizeWidget _buildAppBar(BuildContext context, bool isSmallScreen, bool isMediumScreen) {
+    return AppBar(
+      backgroundColor: AppColors.umrahBackground,
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back,
+          color: Colors.black,
+          size: isSmallScreen ? 20 :
+          isMediumScreen ? 22 : 24,
+        ),
+        onPressed: () => Navigator.pop(context),
+      ),
+      title: Text(
+        'Umrah Links',
+        style: TextStyles.umrahAppBarTitleText(context),
+      ),
+      centerTitle: true,
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          },
+          child: Text(
+            'Skip',
+            style: TextStyles.umrahSkipButtonText(context),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, bool isSmallScreen, bool isMediumScreen) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Interests',
+          style: TextStyles.umrahTitleText(context),
+        ),
+        SizedBox(height: isSmallScreen ? 4 :
+        isMediumScreen ? 6 : 8),
+        Text(
+          'Select the topics you\'re interested in to get personalized Umrah resources and guidance for your spiritual journey.',
+          style: TextStyles.umrahDescriptionText(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLinksGrid(BuildContext context) {
+    final umrahProvider = Provider.of<UmrahLinksProvider>(context);
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = _isSmallScreen(context);
+    final isMediumScreen = _isMediumScreen(context);
+
+    final crossAxisCount = isSmallScreen ? 2 :
+    isMediumScreen ? 3 : 4;
+    final buttonHeight = isSmallScreen ? screenSize.height * 0.06 :
+    isMediumScreen ? screenSize.height * 0.055 :
+    screenSize.height * 0.05;
+    final buttonPadding = isSmallScreen ? 6.0 :
+    isMediumScreen ? 8.0 : 10.0;
+
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: isSmallScreen ? 8 :
+        isMediumScreen ? 10 : 12,
+        mainAxisSpacing: isSmallScreen ? 8 :
+        isMediumScreen ? 10 : 12,
+        childAspectRatio: isSmallScreen ? 2.8 :
+        isMediumScreen ? 3.0 : 3.2,
+      ),
+      itemCount: umrahProvider.umrahLinks.length,
+      itemBuilder: (context, index) {
+        final link = umrahProvider.umrahLinks[index];
+        return _buildLinkButton(
+          context: context,
+          title: link['title'] as String,
+          isSelected: link['selected'] as bool,
+          onTap: () => umrahProvider.toggleLinkSelection(index),
+          height: buttonHeight,
+          padding: buttonPadding,
+        );
+      },
+    );
+  }
+
   Widget _buildLinkButton({
+    required BuildContext context,
     required String title,
     required bool isSelected,
     required VoidCallback onTap,
     required double height,
     required double padding,
-    required double fontSize,
   }) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       height: height,
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF094B4A) : Color(0xFFFCF5DB),
+        color: isSelected ? AppColors.umrahButtonSelected : AppColors.umrahButtonUnselected,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isSelected ? const Color(0xFF094B4A) : Colors.grey.shade300,
+          color: isSelected ? AppColors.umrahButtonSelected : AppColors.umrahButtonBorder.withOpacity(0.3),
           width: 1.5,
         ),
         boxShadow: [
@@ -255,13 +191,57 @@ class _UmrahLinksState extends State<UmrahLinks> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : const Color(0xFF094B4A),
+                style: TextStyles.umrahButtonText(context).copyWith(
+                  color: isSelected ? Colors.white : AppColors.umrahText,
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContinueButton(BuildContext context) {
+    final umrahProvider = Provider.of<UmrahLinksProvider>(context);
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = _isSmallScreen(context);
+    final isMediumScreen = _isMediumScreen(context);
+
+    if (umrahProvider.selectedCount != 4) {
+      return const SizedBox.shrink();
+    }
+
+    return Center(
+      child: SizedBox(
+        width: isSmallScreen ? screenSize.width * 0.9 :
+        isMediumScreen ? screenSize.width * 0.85 :
+        screenSize.width * 0.8,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.umrahButtonSelected,
+            foregroundColor: Colors.white,
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 12),
+            ),
+            padding: EdgeInsets.symmetric(
+              vertical: isSmallScreen ? screenSize.height * 0.016 :
+              isMediumScreen ? screenSize.height * 0.017 :
+              screenSize.height * 0.018,
+            ),
+          ),
+          onPressed: () {
+            final selectedItems = umrahProvider.getSelectedLinks();
+            debugPrint('Selected items: $selectedItems');
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
+          },
+          child: Text(
+            'Continue',
+            style: TextStyles.umrahContinueButtonText(context),
           ),
         ),
       ),

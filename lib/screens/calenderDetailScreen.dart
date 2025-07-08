@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:islamicinstapp/Styles/text_styles.dart';
+import 'package:islamicinstapp/Provider/event_detail_provider.dart';
 import 'package:islamicinstapp/widgets/bottom_nav_bar.dart';
 
 class EventDetailScreen extends StatelessWidget {
   final DateTime selectedDate;
 
-   EventDetailScreen({Key? key, required this.selectedDate}) : super(key: key);
-
+  const EventDetailScreen({Key? key, required this.selectedDate}) : super(key: key);
   static const backgroundColor = Color(0xFFFCF5DB);
-  static const primaryColor = Color(0xFF063A39); // Darker shade
+  static const primaryColor = Color(0xFF063A39);
   static const textColor = Colors.black;
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => EventDetailProvider(selectedDate: selectedDate),
+      child: _EventDetailContent(selectedDate: selectedDate),
+    );
+  }
+}
+
+class _EventDetailContent extends StatelessWidget {
+  final DateTime selectedDate;
+
+  const _EventDetailContent({required this.selectedDate});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<EventDetailProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 375;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
-      bottomNavigationBar: CustomBottomNavBar(),
+      backgroundColor: EventDetailScreen.backgroundColor,
+      bottomNavigationBar: const CustomBottomNavBar(),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -46,7 +63,7 @@ class EventDetailScreen extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          primaryColor.withOpacity(0.7),
+                          EventDetailScreen.primaryColor.withOpacity(0.7),
                           Colors.transparent,
                         ],
                       ),
@@ -63,6 +80,7 @@ class EventDetailScreen extends StatelessWidget {
                   ),
                 ],
               ),
+
               // Info Row (Location | Date | Register)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -73,15 +91,11 @@ class EventDetailScreen extends StatelessWidget {
                     Expanded(
                       child: Column(
                         children: [
-                          Icon(Icons.location_on, color: primaryColor, size: 28),
+                          Icon(Icons.location_on, color: EventDetailScreen.primaryColor, size: 28),
                           const SizedBox(height: 4),
                           Text(
                             'Masjid Al-Haram',
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: isSmallScreen ? 12 : 14,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyles.eventDetailInfoText(context),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -96,17 +110,19 @@ class EventDetailScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         border: Border(
                           right: BorderSide(
-                            color: primaryColor,
+                            color: EventDetailScreen.primaryColor,
                             width: 3,
                             style: BorderStyle.solid,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 30,),
+                    SizedBox(width: 30),
+
+                    // Date Section
                     SizedBox(
-                      width: 70, // Small width
-                      height: 60, // Small height
+                      width: 70,
+                      height: 60,
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -125,7 +141,7 @@ class EventDetailScreen extends StatelessWidget {
                                   topRight: Radius.circular(10),
                                 ),
                               ),
-                              child: const Center(
+                              child: Center(
                                 child: Text(
                                   'MAR',
                                   style: TextStyle(
@@ -164,7 +180,9 @@ class EventDetailScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: 30,),
+                    SizedBox(width: 30),
+
+                    // Vertical dotted divider
                     Container(
                       height: 60,
                       width: 1,
@@ -172,7 +190,7 @@ class EventDetailScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         border: Border(
                           right: BorderSide(
-                            color: primaryColor,
+                            color: EventDetailScreen.primaryColor,
                             width: 3,
                             style: BorderStyle.solid,
                           ),
@@ -182,25 +200,30 @@ class EventDetailScreen extends StatelessWidget {
 
                     // Register Section
                     Expanded(
-                      child: Column(
-                        children: [
-                          Icon(Icons.event_available, color: primaryColor, size: 28),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Register',
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: isSmallScreen ? 12 : 14,
-                              fontWeight: FontWeight.w600,
+                      child: GestureDetector(
+                        onTap: () => provider.toggleRegistration(),
+                        child: Column(
+                          children: [
+                            Icon(
+                              provider.isRegistered ? Icons.event_available : Icons.event_note,
+                              color: EventDetailScreen.primaryColor,
+                              size: 28,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                            const SizedBox(height: 4),
+                            Text(
+                              provider.isRegistered ? 'Registered' : 'Register',
+                              style: TextStyles.eventDetailInfoText(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+
+              // Time section
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
                 child: Container(
@@ -212,33 +235,27 @@ class EventDetailScreen extends StatelessWidget {
                   ),
                   child: Text(
                     '6:00 - 8:00 PM',
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: isSmallScreen ? 14 : 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyles.eventDetailTimeText(context),
                   ),
                 ),
               ),
+
+              // About section
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
                 child: Container(
                   width: 599,
-                  padding: const EdgeInsets.all(16), // padding inside the box
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200, // light grey background
-                    borderRadius: BorderRadius.circular(16), // rounded corners (16 for softer corners)
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'About',
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: isSmallScreen ? 18 : 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyles.eventDetailSectionTitleText(context),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -247,17 +264,14 @@ class EventDetailScreen extends StatelessWidget {
                             'an opportunity to reflect on the life, teachings, and '
                             'enduring impact of the Prophet Muhammad through a '
                             'grounded and meaningful lens.',
-                        style: TextStyle(
-                          color: textColor.withOpacity(0.8),
-                          fontSize: isSmallScreen ? 14 : 16,
-                          height: 1.5,
-                        ),
+                        style: TextStyles.eventDetailDescriptionText(context),
                       ),
                     ],
                   ),
                 ),
               ),
 
+              // People attending section
               Padding(
                 padding: EdgeInsets.fromLTRB(isSmallScreen ? 12 : 24, 16, isSmallScreen ? 12 : 24, 16),
                 child: Container(
@@ -269,22 +283,15 @@ class EventDetailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Heading
                       Text(
                         'People Attending',
-                        style: TextStyle(
-                          fontSize: isSmallScreen ? 16 : 18,
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
-                        ),
+                        style: TextStyles.eventDetailAttendeesText(context),
                       ),
                       SizedBox(height: isSmallScreen ? 10 : 12),
 
-                      // Row with avatars + 75+ + Connect button
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Flexible avatar row - uses Expanded so it shrinks nicely on small screens
                           Expanded(
                             flex: 3,
                             child: SingleChildScrollView(
@@ -305,11 +312,10 @@ class EventDetailScreen extends StatelessWidget {
 
                           const SizedBox(width: 12),
 
-                          // "75+" text
                           Flexible(
                             flex: 1,
                             child: Text(
-                              '75+',
+                              '${provider.attendeesCount}+',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: isSmallScreen ? 13 : 14,
@@ -320,12 +326,14 @@ class EventDetailScreen extends StatelessWidget {
 
                           const Spacer(),
 
-                          // Connect button - wrapped in Flexible to prevent overflow
                           Flexible(
                             flex: 2,
                             child: ElevatedButton(
                               onPressed: () {
-                                // your connect logic here
+                                provider.connectWithAttendees();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Connecting with attendees...')),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
@@ -338,10 +346,7 @@ class EventDetailScreen extends StatelessWidget {
                               ),
                               child: Text(
                                 'Connect',
-                                style: TextStyle(
-                                  fontSize: isSmallScreen ? 11 : 12,
-                                  color: Colors.white,
-                                ),
+                                style: TextStyles.eventDetailConnectButtonText(context),
                               ),
                             ),
                           ),

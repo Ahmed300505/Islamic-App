@@ -1,202 +1,248 @@
 import 'package:flutter/material.dart';
+import 'package:islamicinstapp/Provider/auth_selection_provider.dart';
+import 'package:islamicinstapp/Styles/colors.dart';
+import 'package:islamicinstapp/Styles/text_styles.dart';
+import 'package:provider/provider.dart';
 import 'package:islamicinstapp/AuthScreens/login.dart';
 import 'package:islamicinstapp/screens/home_page.dart';
+import 'package:islamicinstapp/screens/umrahLinks.dart';
 
 class AuthSelectionPage extends StatelessWidget {
   const AuthSelectionPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AuthSelectionProvider(),
+      child: const _AuthSelectionContent(),
+    );
+  }
+}
+
+class _AuthSelectionContent extends StatelessWidget {
+  const _AuthSelectionContent();
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final screenHeight = screenSize.height;
+    final screenWidth = screenSize.width;
+
+    // Screen size classifications
+    final isVerySmallScreen = screenHeight < 600 || screenWidth < 320;
+    final isSmallScreen = screenHeight < 700;
+    final isMediumScreen = screenHeight < 800;
+    final isNarrowScreen = screenWidth < 350;
+    final isWideScreen = screenWidth > 400;
+
+    // Responsive spacing
+    final topPadding = isVerySmallScreen ? 30.0 :
+    isSmallScreen ? 50.0 :
+    isMediumScreen ? 70.0 : 80.0;
+
+    final titleBottomPadding = isVerySmallScreen ? 40.0 :
+    isSmallScreen ? 80.0 :
+    isMediumScreen ? 100.0 : 120.0;
+
+    final buttonsBottomPadding = isVerySmallScreen ? 40.0 :
+    isSmallScreen ? 80.0 :
+    isMediumScreen ? 120.0 : 160.0;
+
+    final bottomButtonPadding = isVerySmallScreen ? 20.0 :
+    isSmallScreen ? 30.0 : 40.0;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF094B4A), // Same color as your splash screen
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 80),
-            // "Join the" text with stylish font
-            const Text(
-              'Join the',
-              style: TextStyle(
-                fontSize: 60,
-                fontWeight: FontWeight.w300,
-                color: Colors.white,
-                fontStyle: FontStyle.italic,
-                letterSpacing: 1.5,
+      backgroundColor: AppColors.primary,
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isNarrowScreen ? 16.0 :
+            isWideScreen ? 32.0 : 24.0,
+            vertical: 20.0,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: topPadding),
+
+              // "Join the" text
+              Text(
+                'Join the',
+                style: TextStyles.joinTheText(context),
               ),
-            ),
-            // Big "Link!" text
-            Padding(
-              padding: const EdgeInsets.only(left: 160),
-              child: const Text(
-                'Link!',
-                style: TextStyle(
-                  fontSize: 92,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  height: 0.9,
-                  letterSpacing: 2.0,
+
+              // "Link!" text with responsive positioning
+              Padding(
+                padding: EdgeInsets.only(
+                  left: isVerySmallScreen ? screenWidth * 0.3 :
+                  isSmallScreen ? screenWidth * 0.35 :
+                  screenWidth * 0.4,
+                ),
+                child: Text(
+                  'Link!',
+                  style: TextStyles.linkText(context),
                 ),
               ),
-            ),
-            const SizedBox(height: 160),
-            Center(
-              child: TweenAnimationBuilder<Color?>(
-                duration: const Duration(milliseconds: 500),
-                tween: ColorTween(
-                  begin: const Color(0xFF032E35).withOpacity(0.7), // Slightly transparent initial color
-                  end: const Color(0xFF032E35), // Darker teal color you wanted
-                ),
-                builder: (BuildContext context, Color? value, Widget? child) {
-                  return Container(
-                    padding: const EdgeInsets.all(16), // Outer spacing
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF094B4A).withOpacity(0.3), // Semi-transparent teal background
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Member Button
-                        SizedBox(
-                          width: 140,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: value, // Animated color
-                              foregroundColor: const Color(0xFF094B4A), // Dark teal text
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                side: BorderSide(
-                                  color: value!.withOpacity(0.8), // Border color
-                                  width: 2,
+
+              SizedBox(height: titleBottomPadding),
+
+              // Buttons Container
+              Center(
+                child: Consumer<AuthSelectionProvider>(
+                  builder: (context, provider, child) {
+                    return Container(
+                      padding: EdgeInsets.all(isVerySmallScreen ? 10.0 : 16.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Member Button
+                          SizedBox(
+                            width: isVerySmallScreen ? screenWidth * 0.35 :
+                            isSmallScreen ? 130.0 : 140.0,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: provider.isMemberSelected
+                                    ? AppColors.secondary
+                                    : AppColors.secondary.withOpacity(0.7),
+                                foregroundColor: AppColors.primary,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: isVerySmallScreen ? 10.0 : 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(
+                                    color: provider.isMemberSelected
+                                        ? AppColors.secondary.withOpacity(0.8)
+                                        : Colors.transparent,
+                                    width: 2,
+                                  ),
                                 ),
+                                elevation: 4,
+                                shadowColor: AppColors.secondary.withOpacity(0.5),
                               ),
-                              elevation: 4,
-                              shadowColor: value.withOpacity(0.5),
-                            ),
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (_) => const LoginScreen()),
-                              );
-                            },
-                            child: const Text(
-                              'Member',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Color(0xFFDBE5D0),
-                                fontWeight: FontWeight.bold,
+                              onPressed: () {
+                                provider.selectMember();
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                );
+                              },
+                              child: Text(
+                                'Member',
+                                style: TextStyles.buttonText(context),
                               ),
                             ),
                           ),
-                        ),
-                        // Spacing with animation
-                        TweenAnimationBuilder<double>(
-                          duration: const Duration(milliseconds: 300),
-                          tween: Tween<double>(begin: 10, end: 30),
-                          builder: (BuildContext context, double value, Widget? child) {
-                            return SizedBox(width: value);
-                          },
-                        ),
-                        // Leader Button
-                        SizedBox(
-                          width: 140,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: value, // Animated color
-                              foregroundColor: const Color(0xFF094B4A), // Dark teal text
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                side: BorderSide(
-                                  color: value.withOpacity(0.8), // Border color
-                                  width: 2,
+
+                          SizedBox(width: isVerySmallScreen ? 12.0 :
+                          isSmallScreen ? 20.0 : 30.0),
+
+                          // Leader Button
+                          SizedBox(
+                            width: isVerySmallScreen ? screenWidth * 0.35 :
+                            isSmallScreen ? 130.0 : 140.0,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: !provider.isMemberSelected
+                                    ? AppColors.secondary
+                                    : AppColors.secondary.withOpacity(0.7),
+                                foregroundColor: AppColors.primary,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: isVerySmallScreen ? 10.0 : 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(
+                                    color: !provider.isMemberSelected
+                                        ? AppColors.secondary.withOpacity(0.8)
+                                        : Colors.transparent,
+                                    width: 2,
+                                  ),
                                 ),
+                                elevation: 4,
+                                shadowColor: AppColors.secondary.withOpacity(0.5),
                               ),
-                              elevation: 4,
-                              shadowColor: value.withOpacity(0.5),
-                            ),
-                            onPressed: () {},
-                            child: const Text(
-                              'Leader',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Color(0xFFDBE5D0),
-                                fontWeight: FontWeight.bold,
+                              onPressed: () {
+                                provider.selectLeader();
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const UmrahLinks()),
+                                );
+                              },
+                              child: Text(
+                                'Leader',
+                                style: TextStyles.buttonText(context),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 300),
-            // Clickable text
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomePage()),
-                  );
+                        ],
+                      ),
+                    );
                   },
-                child: const Text(
-                  'Already Apart of it?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                  ),
                 ),
               ),
-            ),
-            const Spacer(),
-            // Login button
-            Center(
-              child: SizedBox(
-                width: 150,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Colors.black),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: () {
-                    // Add your login navigation logic here
+
+              SizedBox(height: buttonsBottomPadding),
+
+              // "Already part of it?" text
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomePage()),
+                    );
                   },
-                  child: const Text(
-                    'LOG IN',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
+                  child: Text(
+                    'Already Apart of it?',
+                    textAlign: TextAlign.center,
+                    style: TextStyles.bottomText(context),
+                  ),
+                ),
+              ),
+
+              const Spacer(),
+
+              // Login button
+              Center(
+                child: SizedBox(
+                  width: isVerySmallScreen ? screenWidth * 0.4 : 150.0,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textLight,
+                      side: const BorderSide(color: Colors.black),
+                      padding: EdgeInsets.symmetric(
+                          vertical: isVerySmallScreen ? 10.0 : 16.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      // Add your login navigation logic here
+                    },
+                    child: Text(
+                      'LOG IN',
+                      style: TextStyles.buttonText(context)
+                          .copyWith(fontWeight: FontWeight.w400),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            // Guest text
-            const Center(
-              child: Text(
-                'Guest',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                  decoration: TextDecoration.underline,
+
+              SizedBox(height: isVerySmallScreen ? 8.0 : 16.0),
+
+              // Guest text
+              Center(
+                child: Text(
+                  'Guest',
+                  style: TextStyles.guestText(context),
                 ),
               ),
-            ),
-            const SizedBox(height: 40),
-          ],
+
+              SizedBox(height: bottomButtonPadding),
+            ],
+          ),
         ),
       ),
     );
