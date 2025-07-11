@@ -54,18 +54,24 @@ class PostCard extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF033941).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(22),
                       ),
-                      child: const Icon(Icons.groups, color: Color(0xFF033941)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6), // Adjust padding for better fit
+                        child: Image.asset(
+                          'assets/images/homelogo1.png', // Replace with your actual path
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       communityName,
                       style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF033941)),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF033941),
+                      ),
                     ),
                   ],
                 ),
@@ -79,23 +85,27 @@ class PostCard extends StatelessWidget {
             // Main post image
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                imageUrl, // Make sure this is the correct path from assets
+              child:Image.network(
+                imageUrl,
                 height: 300,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                // Asset images don't support loadingBuilder, so remove that
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(child: CircularProgressIndicator());
+                },
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     height: 300,
                     width: double.infinity,
                     color: Colors.grey[200],
                     child: const Center(
-                      child: Icon(Icons.error, color: Colors.red),
+                      child: Icon(Icons.broken_image, color: Colors.red),
                     ),
                   );
                 },
               ),
+
             ),
             const SizedBox(height: 12),
             // Post actions (like, share, comment, save)

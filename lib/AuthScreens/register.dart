@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:islamicinstapp/Provider/register_provider.dart';
 import 'package:islamicinstapp/Styles/colors.dart';
 import 'package:islamicinstapp/Styles/text_styles.dart';
-import 'package:provider/provider.dart';
 import 'package:islamicinstapp/AuthScreens/login.dart';
 import 'package:islamicinstapp/screens/home_page.dart';
 
@@ -82,26 +84,49 @@ class _RegisterScreenContent extends StatelessWidget {
   }
 
   Widget _buildLogo(BuildContext context, bool isVerySmallScreen, bool isSmallScreen) {
+    final double logoSize = isVerySmallScreen ? 90 : isSmallScreen ? 120 : 140;
+
     return Transform.translate(
       offset: Offset(0, isVerySmallScreen ? -25 : -40),
-      child: Container(
-        width: isVerySmallScreen ? 90 : isSmallScreen ? 120 : 140,
-        height: isVerySmallScreen ? 90 : isSmallScreen ? 120 : 140,
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(70),
-          image: const DecorationImage(
-            image: NetworkImage('https://images.unsplash.com/photo-1564121211835-e88c852648ab'),
-            fit: BoxFit.cover,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Circular logo background
+          Container(
+            width: logoSize,
+            height: logoSize,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(logoSize / 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                )
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/elipse.png',
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            )
-          ],
-        ),
+
+          // U-shaped image overlay
+          Positioned(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(logoSize * 0.3),
+              child: Image.asset(
+                'assets/images/ulogo.png',
+                width: logoSize * 0.8,
+                height: logoSize * 0.5,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -176,6 +201,14 @@ class _RegisterScreenContent extends StatelessWidget {
             icon: Icons.email_outlined,
             isSmallScreen: isVerySmallScreen,
           ),
+          _buildTextField(
+            context: context,
+            controller: registerProvider.bioController,
+            hintText: 'Bio (optional)',
+            icon: Icons.info_outline,
+            isSmallScreen: isVerySmallScreen,
+          ),
+          SizedBox(height: isVerySmallScreen ? 6 : isSmallScreen ? 10 : 12),
           SizedBox(height: isVerySmallScreen ? 6 : isSmallScreen ? 10 : 12),
           _buildPasswordField(
             context: context,
@@ -187,6 +220,20 @@ class _RegisterScreenContent extends StatelessWidget {
           _buildConfirmPasswordField(
             context: context,
             controller: registerProvider.confirmPasswordController,
+            isSmallScreen: isVerySmallScreen,
+          ),
+          SizedBox(height: isVerySmallScreen ? 6 : isSmallScreen ? 10 : 12),
+          _buildImagePickerField(
+            context: context,
+            label: 'Profile Image',
+            isProfile: true,
+            isSmallScreen: isVerySmallScreen,
+          ),
+          SizedBox(height: isVerySmallScreen ? 6 : isSmallScreen ? 10 : 12),
+          _buildImagePickerField(
+            context: context,
+            label: 'Banner Image',
+            isProfile: false,
             isSmallScreen: isVerySmallScreen,
           ),
         ],
@@ -303,6 +350,68 @@ class _RegisterScreenContent extends StatelessWidget {
     );
   }
 
+  Widget _buildImagePickerField({
+    required BuildContext context,
+    required String label,
+    required bool isProfile,
+    bool isSmallScreen = false,
+  }) {
+    final registerProvider = Provider.of<RegisterProvider>(context);
+    final image = isProfile ? registerProvider.profileImage : registerProvider.bannerImage;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: isSmallScreen ? 14 : 16,
+          ),
+        ),
+        SizedBox(height: isSmallScreen ? 6 : 8),
+        GestureDetector(
+          onTap: () => registerProvider.pickImage(isProfile),
+          child: Container(
+            height: isSmallScreen ? 100 : 120,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white70, width: 1),
+            ),
+            child: image == null
+                ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isProfile ? Icons.person : Icons.image,
+                  color: Colors.white70,
+                  size: isSmallScreen ? 30 : 40,
+                ),
+                SizedBox(height: isSmallScreen ? 4 : 8),
+                Text(
+                  'Tap to select ${isProfile ? 'profile' : 'banner'} image',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: isSmallScreen ? 12 : 14,
+                  ),
+                ),
+              ],
+            )
+                : ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.file(
+                File(image.path),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildRegisterButton(BuildContext context, bool isVerySmallScreen, bool isSmallScreen, bool isNarrowScreen) {
     final registerProvider = Provider.of<RegisterProvider>(context);
 
@@ -323,7 +432,28 @@ class _RegisterScreenContent extends StatelessWidget {
           ),
           onPressed: registerProvider.isLoading
               ? null
-              : () => registerProvider.register(context),
+              : () {
+            // Validate fields before registration
+            if (registerProvider.nameController.text.isEmpty ||
+                registerProvider.usernameController.text.isEmpty ||
+                registerProvider.emailController.text.isEmpty ||
+                registerProvider.passwordController.text.isEmpty ||
+                registerProvider.confirmPasswordController.text.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Please fill all fields')),
+              );
+              return;
+            }
+
+            if (registerProvider.passwordController.text.length < 6) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Password must be at least 6 characters')),
+              );
+              return;
+            }
+
+            registerProvider.register(context);
+          },
           child: registerProvider.isLoading
               ? const CircularProgressIndicator(color: Colors.white)
               : Text(

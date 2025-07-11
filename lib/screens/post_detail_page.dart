@@ -63,7 +63,7 @@ class _PostDetailContent extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/islamicevent2.jpg'),
+                      image: AssetImage('assets/images/postdetail1.png'),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -76,15 +76,19 @@ class _PostDetailContent extends StatelessWidget {
                 Column(
                   children: [
                     const SizedBox(height: 10),
-                    const SizedBox(height: 90),
+                    const SizedBox(height: 50),
 
                     // NAME
                     Text(
                       community['name'] as String,
                       style: TextStyles.postDetailTitleText(context),
                     ),
+                    Text(
+                      'ahmed@gmail.com',
+                      style: TextStyles.postDetailEmailText(context),
+                    ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40),
 
                     // TAB BAR
                     Container(

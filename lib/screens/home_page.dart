@@ -16,13 +16,23 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => HomeProvider(),
-      child: const _HomePageContent(),
+      child:  _HomePageContent(),
     );
   }
 }
 
-class _HomePageContent extends StatelessWidget {
-  const _HomePageContent();
+class _HomePageContent extends StatefulWidget {
+  @override
+  State<_HomePageContent> createState() => _HomePageContentState();
+}
+
+class _HomePageContentState extends State<_HomePageContent> {
+  @override
+  void initState() {
+    super.initState();
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    homeProvider.fetchPosts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +60,6 @@ class _HomePageContent extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.homeBackground,
             borderRadius: BorderRadius.circular(12),
           ),
           child: DropdownButtonHideUnderline(
@@ -88,30 +97,34 @@ class _HomePageContent extends StatelessWidget {
     );
   }
 
+
   Widget _buildPostsList(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
+    final posts = homeProvider.posts;
 
     return Expanded(
-      child: ListView.builder(
-        itemCount: homeProvider.posts.length,
+      child: posts.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+        itemCount: posts.length,
         itemBuilder: (context, index) {
-          final post = homeProvider.posts[index];
+          final post = posts[index];
           return PostCard(
-            postId: post['id'],
-            communityName: post['communityName'],
-            postText: post['postText'],
-            imageUrl: post['imageUrl'],
-            likes: post['likes'],
-            comments: post['comments'],
-            isLiked: post['isLiked'],
-            isSaved: post['isSaved'],
-            onLikePressed: () => homeProvider.toggleLike(index),
-            onSavePressed: () => homeProvider.toggleSave(index),
+            postId: post.id,
+            communityName: post.communityName,
+            postText: post.content, // formerly 'postText'
+            imageUrl: post.imageUrl ?? '', // fallback for null
+            likes: post.likes,
+            comments: post.comments,
+            isLiked: false, // You can enhance with user-likes logic
+            isSaved: false, // Same here
+            onLikePressed: () {}, // Future enhancement
+            onSavePressed: () {},
             onCommentPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PostDetailPage(postId: post['id']),
+                  builder: (context) => PostDetailPage(postId: post.id),
                 ),
               );
             },

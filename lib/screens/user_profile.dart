@@ -23,19 +23,23 @@ class _UserProfileContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final horizontalPadding = screenSize.width < 350 ? 12.0 : 16.0;
-
     return Scaffold(
       backgroundColor: AppColors.profileBackground,
       bottomNavigationBar: const CustomBottomNavBar(),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Consumer<ProfileProvider>(
-              builder: (context, profileProvider, _) {
-                final profileData = profileProvider.profileData;
-                return Stack(
+      body: Consumer<ProfileProvider>(
+        builder: (context, profileProvider, _) {
+          if (profileProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final profileData = profileProvider.profileData;
+          final screenSize = MediaQuery.of(context).size;
+          final horizontalPadding = screenSize.width < 350 ? 12.0 : 16.0;
+
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Stack(
                   children: [
                     Column(
                       children: [
@@ -68,27 +72,35 @@ class _UserProfileContent extends StatelessWidget {
                     // Profile Stats and Image
                     _buildProfileStatsAndImage(context, profileData),
                   ],
-                );
-              },
-            ),
-          ),
-        ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
   Widget _buildCoverPhoto(BuildContext context, String coverPhoto) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final height = screenHeight < 600 ? 180.0 :
-    screenHeight < 700 ? 200.0 :
-    screenHeight < 800 ? 220.0 : 240.0;
+    final height = screenHeight < 600
+        ? 180.0
+        : screenHeight < 700
+        ? 200.0
+        : screenHeight < 800
+        ? 220.0
+        : 240.0;
+
+    final isNetwork = coverPhoto.startsWith('http');
 
     return Container(
       height: height,
       width: double.infinity,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(coverPhoto),
+          image: isNetwork
+              ? NetworkImage(coverPhoto)
+              : AssetImage(coverPhoto) as ImageProvider,
           fit: BoxFit.cover,
         ),
       ),
@@ -294,11 +306,18 @@ class _UserProfileContent extends StatelessWidget {
               ),
             ),
             child: ClipOval(
-              child: Image.asset(
+              child: (profileData['profileImage'] != null &&
+                  profileData['profileImage'].toString().startsWith('http'))
+                  ? Image.network(
+                profileData['profileImage'],
+                fit: BoxFit.cover,
+              )
+                  : Image.asset(
                 profileData['profileImage'],
                 fit: BoxFit.cover,
               ),
             ),
+
           ),
 
           SizedBox(width: _getMediumSpacing(context) * 1.5),

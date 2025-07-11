@@ -343,7 +343,13 @@ class TextStyles {
       color: Color(0xFF033941),
     );
   }
-
+  static TextStyle postDetailEmailText(BuildContext context) {
+    return const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.bold,
+      color: Colors.black45,
+    );
+  }
   static TextStyle postDetailStatValueText(BuildContext context) {
     return const TextStyle(
       fontSize: 16,
