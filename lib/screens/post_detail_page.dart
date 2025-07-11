@@ -63,7 +63,7 @@ class _PostDetailContent extends StatelessWidget {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/islamicevent2.jpg'),
+                      image: AssetImage('assets/images/postdetail1.png'),
                       fit: BoxFit.cover,
                     ),
                   ),

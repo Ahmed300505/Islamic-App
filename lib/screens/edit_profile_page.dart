@@ -9,22 +9,39 @@ class EditProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<EditProfileProvider>(context);
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFEFDEB), // Full background color
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 200.0,
+            expandedHeight: screenHeight * 0.25,
             floating: false,
             pinned: false,
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    'assets/images/postimage3.jpg',
-                    fit: BoxFit.cover,
+                  // Background Image with overlay
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFF033941).withOpacity(0.8),
+                          const Color(0xFF033941).withOpacity(0.6),
+                        ],
+                      ),
+                    ),
+                    child: Image.asset(
+                      'assets/images/postimage3.jpg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
+
+                  // Back button
                   Positioned(
                     top: MediaQuery.of(context).padding.top + 10,
                     left: 16,
@@ -44,164 +61,239 @@ class EditProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 30,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFEFDEB),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
           ),
           SliverToBoxAdapter(
             child: Container(
-              color: const Color(0xFFFEFDEB),
-              padding: const EdgeInsets.all(16),
+              color: const Color(0xFFFEFDEB), // Matching background
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Text(
-                      'Edit Profile',
-                      style: TextStyles.editProfileTitleText(context),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Center(
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
+                  // Profile image with connection to header
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Connection curve
+                      Container(
+                        height: 30,
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEFDEB),
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(30),
+                          ),
+                        ),
+                      ),
+
+                      // Profile image with shadow - now more visible
+                      Transform.translate(
+                        offset: const Offset(0, -50),
+                        child: Container(
+                          width: 120,
+                          height: 120,
                           decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFFFEFDEB),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 15,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
                             border: Border.all(
                               color: const Color(0xFF033941),
-                              width: 2,
+                              width: 3,
                             ),
-                            borderRadius: BorderRadius.circular(50),
-                            image: DecorationImage(
-                              image: AssetImage(provider.profileImage),
-                              fit: BoxFit.cover,
+                          ),
+                          child: Stack(
+                            children: [
+                              // Profile image - now properly visible
+                              ClipOval(
+                                child: Image.asset(
+                                  provider.profileImage,
+                                  fit: BoxFit.cover,
+                                  width: 114,
+                                  height: 114,
+                                ),
+                              ),
+
+                              // Camera icon
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    // Add image picker functionality here
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF033941),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Form content
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Text(
+                            'Edit Profile',
+                            style: TextStyles.editProfileTitleText(context)
+                                .copyWith(color: const Color(0xFF033941)),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Name Field
+                        Text(
+                          'Name',
+                          style: TextStyles.editProfileLabelText(context)
+                              .copyWith(color: const Color(0xFF033941)),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            ),
+                          ),
+                          child: TextFormField(
+                            initialValue: provider.name,
+                            onChanged: (value) => provider.updateName(value),
+                            style: const TextStyle(color: Colors.black),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xFFFEFDEB),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
                             ),
                           ),
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () {
-                              // Add image picker functionality here
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF033941),
-                                borderRadius: BorderRadius.circular(20),
+                        const SizedBox(height: 16),
+
+                        // Username Field
+                        Text(
+                          'Username',
+                          style: TextStyles.editProfileLabelText(context)
+                              .copyWith(color: const Color(0xFF033941)),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            ),
+                          ),
+                          child: TextFormField(
+                            initialValue: provider.username,
+                            onChanged: (value) => provider.updateUsername(value),
+                            style: const TextStyle(color: Colors.black),
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xFFFEFDEB),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
                               ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 20,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
                               ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Bio Field
+                        Text(
+                          'Bio',
+                          style: TextStyles.editProfileLabelText(context)
+                              .copyWith(color: const Color(0xFF033941)),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            ),
+                          ),
+                          child: TextFormField(
+                            initialValue: provider.bio,
+                            onChanged: (value) => provider.updateBio(value),
+                            style: const TextStyle(color: Colors.black),
+                            maxLines: 3,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: const Color(0xFFFEFDEB),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Save Button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => provider.saveChanges(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF033941),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                side: const BorderSide(
+                                  color: Colors.black,
+                                  width: 1,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              elevation: 3,
+                            ),
+                            child: Text(
+                              'Save Changes',
+                              style: TextStyles.editProfileButtonText(context)
+                                  .copyWith(color: Colors.white),
                             ),
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Text(
-                    'Name',
-                    style: TextStyles.editProfileLabelText(context),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    initialValue: provider.name,
-                    onChanged: (value) => provider.updateName(value),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Username',
-                    style: TextStyles.editProfileLabelText(context),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    initialValue: provider.username,
-                    onChanged: (value) => provider.updateUsername(value),
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Bio',
-                    style: TextStyles.editProfileLabelText(context),
-                  ),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    initialValue: provider.bio,
-                    onChanged: (value) => provider.updateBio(value),
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => provider.saveChanges(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF033941),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text(
-                        'Save Changes',
-                        style: TextStyles.editProfileButtonText(context),
-                      ),
                     ),
                   ),
                 ],

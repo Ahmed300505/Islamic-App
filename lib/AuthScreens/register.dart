@@ -80,32 +80,53 @@ class _RegisterScreenContent extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildLogo(BuildContext context, bool isVerySmallScreen, bool isSmallScreen) {
+    final double logoSize = isVerySmallScreen ? 90 : isSmallScreen ? 120 : 140;
+
     return Transform.translate(
       offset: Offset(0, isVerySmallScreen ? -25 : -40),
-      child: Container(
-        width: isVerySmallScreen ? 90 : isSmallScreen ? 120 : 140,
-        height: isVerySmallScreen ? 90 : isSmallScreen ? 120 : 140,
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(70),
-          image: const DecorationImage(
-            image: NetworkImage('https://images.unsplash.com/photo-1564121211835-e88c852648ab'),
-            fit: BoxFit.cover,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Circular logo background
+          Container(
+            width: logoSize,
+            height: logoSize,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(logoSize / 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                )
+              ],
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/elipse.png', // Replace with your actual asset path
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            )
-          ],
-        ),
+
+          // U-shaped image overlay
+          Positioned(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(logoSize * 0.3),
+              child: Image.asset(
+                'assets/images/ulogo.png', // Replace with your actual asset path
+                width: logoSize * 0.8,
+                height: logoSize * 0.5,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-
   Widget _buildHeader(BuildContext context, bool isVerySmallScreen, bool isSmallScreen, bool isNarrowScreen) {
     return Padding(
       padding: EdgeInsets.only(

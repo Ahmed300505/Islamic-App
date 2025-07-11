@@ -54,7 +54,7 @@ class SplashStyles {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(40),
       image: const DecorationImage(
-        image: AssetImage('assets/images/islamiclogo.png'),
+        image: AssetImage('assets/images/elipse.png'),
         fit: BoxFit.cover,
       ),
       boxShadow: [
@@ -62,6 +62,38 @@ class SplashStyles {
           color: Colors.black.withOpacity(0.3),
           blurRadius: 15,
           offset: const Offset(0, 10),
+        ),
+      ],
+    );
+  }
+
+// New method for the larger intersecting logo widget
+  Widget buildIntersectingLogo() {
+    final double logoSize = 180; // Larger size as requested
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Main circular logo container with your existing decoration
+        Container(
+          width: logoSize,
+          height: logoSize,
+          decoration: logoDecoration().copyWith(
+            borderRadius: BorderRadius.circular(logoSize / 2),
+          ),
+        ),
+
+        // U-shaped image overlay
+        Positioned(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(logoSize * 0.3),
+            child: Image.asset(
+              'assets/images/ulogo.png',
+              width: logoSize * 0.8,
+              height: logoSize * 0.5,
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
       ],
     );

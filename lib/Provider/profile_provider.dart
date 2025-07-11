@@ -8,8 +8,8 @@ class ProfileProvider with ChangeNotifier {
     'bio': 'Share your favourite quran verse',
     'followers': '2000k',
     'following': '36',
-    'coverPhoto': 'assets/images/profile_2.jpg',
-    'profileImage': 'assets/images/event.jpg',
+    'coverPhoto': 'assets/images/profileimage.png',
+    'profileImage': 'assets/images/profilelogo.png',
     'communities': [
       {
         'name': 'Brother Ahmed',

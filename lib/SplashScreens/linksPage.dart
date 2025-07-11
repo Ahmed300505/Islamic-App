@@ -74,16 +74,17 @@ class _AuthSelectionContent extends StatelessWidget {
               // "Link!" text with responsive positioning
               Padding(
                 padding: EdgeInsets.only(
-                  left: isVerySmallScreen ? screenWidth * 0.3 :
-                  isSmallScreen ? screenWidth * 0.35 :
-                  screenWidth * 0.4,
+                  left: isVerySmallScreen
+                      ? screenWidth * 0.3
+                      : isSmallScreen
+                      ? screenWidth * 0.35
+                      : screenWidth * 0.4,
                 ),
                 child: Text(
                   'Link!',
                   style: TextStyles.linkText(context),
                 ),
               ),
-
               SizedBox(height: titleBottomPadding),
 
               // Buttons Container

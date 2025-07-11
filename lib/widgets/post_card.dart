@@ -54,18 +54,24 @@ class PostCard extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF033941).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(22),
                       ),
-                      child: const Icon(Icons.groups, color: Color(0xFF033941)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6), // Adjust padding for better fit
+                        child: Image.asset(
+                          'assets/images/homelogo1.png', // Replace with your actual path
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Text(
                       communityName,
                       style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF033941)),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF033941),
+                      ),
                     ),
                   ],
                 ),

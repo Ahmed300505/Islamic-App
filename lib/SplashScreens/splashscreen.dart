@@ -21,17 +21,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     {
       'title': 'Learn about Islam and connect with the community',
       'animation': 'assets/images/lotie.json',
-      'image': 'https://images.unsplash.com/photo-1564121211835-e88c852648ab',
+      'image': 'assets/images/splashscreen1.png',
     },
     {
       'title': 'Never miss your prayers with our accurate prayer times',
       'animation': 'assets/images/lotie.json',
-      'image': 'https://images.unsplash.com/photo-1519817650390-64a93db51149',
+      'image': 'assets/images/splash2.png',
     },
     {
       'title': 'Access authentic Quran and Hadith collections',
       'animation': 'assets/images/lotie.json',
-      'image': 'https://images.unsplash.com/photo-1541252260730-0412e8e2108e',
+      'image': 'assets/images/splash3.png',
     },
   ];
 
@@ -79,6 +79,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           : _buildSplashScreen(
         isSmallScreen: isSmallScreen,
         isVerySmallScreen: isVerySmallScreen,
+        isNarrowScreen: isNarrowScreen,
       ),
     );
   }
@@ -86,8 +87,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   Widget _buildSplashScreen({
     required bool isSmallScreen,
     required bool isVerySmallScreen,
+    required bool isNarrowScreen,
   }) {
     final splashProvider = Provider.of<SplashProvider>(context, listen: false);
+    final double logoSize = isVerySmallScreen
+        ? (isNarrowScreen ? 120 : 140)
+        : isSmallScreen
+        ? 160
+        : 180;
 
     return GestureDetector(
       onTap: () {
@@ -103,16 +110,36 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Hero(
-              tag: 'app-logo',
-              child: Container(
-                width: isVerySmallScreen ? 140 : 180,
-                height: isVerySmallScreen ? 140 : 180,
-                decoration: SplashStyles.logoDecoration(),
-              ),
-            ),
+                tag: 'app-logo',
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Main circular logo container
+                    Container(
+                      width: logoSize,
+                      height: logoSize,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(logoSize / 2),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/elipse.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    // U-shaped overlay image
+                    Positioned(
+                      child: Image.asset(
+                        'assets/images/ulogo.png',
+                        width: logoSize * 0.8,
+                        height: logoSize * 0.5,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ],
+                )),
             SizedBox(height: isVerySmallScreen ? 15 : 20),
             Text(
-              'Islamic App',
+              'UMMAH LINK',
               style: SplashStyles.appTitleStyle(isVerySmallScreen),
             ),
             if (splashProvider.showDescription)
@@ -121,8 +148,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 child: Padding(
                   padding: EdgeInsets.only(
                     top: isVerySmallScreen ? 20 : 30,
-                    left: isVerySmallScreen ? 30 : 40,
-                    right: isVerySmallScreen ? 30 : 40,
+                    left: isNarrowScreen ? 20 : 40,
+                    right: isNarrowScreen ? 20 : 40,
                   ),
                   child: Text(
                     'A complete app for Muslims to learn about Islam, prayer times, Quran and more',
@@ -160,36 +187,47 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: isVerySmallScreen ? screenHeight * 0.05 : screenHeight * 0.1),
+                    SizedBox(
+                        height: isVerySmallScreen
+                            ? screenHeight * 0.05
+                            : screenHeight * 0.1),
 
                     // Title
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: isNarrowScreen ? 20 : 30),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: isNarrowScreen ? 20 : 30),
                       child: Text(
                         sliderItems[index]['title']!,
-                        style: SplashStyles.sliderTitleStyle(isNarrowScreen, isSmallScreen),
+                        style: SplashStyles.sliderTitleStyle(
+                            isNarrowScreen, isSmallScreen),
                       ),
                     ),
 
-                    SizedBox(height: isVerySmallScreen ? screenHeight * 0.05 : screenHeight * 0.08),
+                    SizedBox(
+                        height: isVerySmallScreen
+                            ? screenHeight * 0.05
+                            : screenHeight * 0.08),
 
-                    // Lottie Animation Container
+                    // Image Container (removed border radius)
                     Center(
                       child: Container(
-                        width: isVerySmallScreen ? screenWidth * 0.6 : screenWidth * 0.7,
-                        height: isVerySmallScreen ? screenWidth * 0.6 : screenWidth * 0.7,
-                        decoration: SplashStyles.animationContainerDecoration(),
-                        child: ClipOval(
-                          child: Lottie.asset(
-                            sliderItems[index]['animation']!,
-                            fit: BoxFit.contain,
-                            repeat: true,
-                          ),
+                        width: isVerySmallScreen
+                            ? screenWidth * 0.9
+                            : screenWidth * 0.8,
+                        height: isVerySmallScreen
+                            ? screenHeight * 0.4
+                            : screenHeight * 0.45,
+                        child: Image.asset(
+                          sliderItems[index]['image']!,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
 
-                    SizedBox(height: isVerySmallScreen ? screenHeight * 0.1 : screenHeight * 0.15),
+                    SizedBox(
+                        height: isVerySmallScreen
+                            ? screenHeight * 0.05
+                            : screenHeight * 0.1),
 
                     // Page Indicators
                     Row(
@@ -197,7 +235,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       children: List.generate(
                         sliderItems.length,
                             (index) => Container(
-                          margin: EdgeInsets.symmetric(horizontal: isNarrowScreen ? 6 : 8),
+                          margin:
+                          EdgeInsets.symmetric(horizontal: isNarrowScreen ? 6 : 8),
                           width: splashProvider.currentPage == index
                               ? (isNarrowScreen ? 16 : 20)
                               : (isNarrowScreen ? 8 : 10),
@@ -216,7 +255,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
                     // Continue Button
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: isNarrowScreen ? 40 : 60),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: isNarrowScreen ? 40 : 60),
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -230,7 +270,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             } else {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (_) => const AuthSelectionPage()),
+                                MaterialPageRoute(
+                                    builder: (_) => const AuthSelectionPage()),
                               );
                             }
                           },
@@ -244,7 +285,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ),
                     ),
 
-                    SizedBox(height: isVerySmallScreen ? 20 : 0),
+                    SizedBox(height: isVerySmallScreen ? 20 : 30),
                   ],
                 ),
               ),
