@@ -16,6 +16,7 @@ class UserModel {
 
   UserModel({
     required this.uid,
+    required this.id,
     required this.name,
     required this.username,
     required this.email,

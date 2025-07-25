@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:islamicinstapp/Model/userModel.dart';
 import 'package:uuid/uuid.dart';
 
@@ -24,15 +25,19 @@ class AuthService {
   }) async {
     try {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
+      // Create user with email and password
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      String uid = userCredential.user!.uid;
 
       final uuid = _uuid.v4();
 
       UserModel user = UserModel(
         uid: credential.user!.uid,
         uuid: uuid,
+        id: uid,
         name: name,
         username: username,
         email: email,
@@ -42,14 +47,21 @@ class AuthService {
         bio: '',
         followers: [],
         following: [],
+        role: 'user', // default role
+        createdAt: DateTime.now(),
       );
 
       await _firestore
           .collection('users')
           .doc(credential.user!.uid)
           .set(user.toMap());
+      // Save user data in Firestore using UID as document ID
+      await _firestore.collection('users').doc(uid).set(user.toJson());
 
       return user;
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.message}');
+      rethrow;
     } catch (e) {
       debugPrint('Error during registration: $e');
       if (profileImageUrl != null) {
@@ -90,9 +102,11 @@ class AuthService {
       return null;
     } catch (e) {
       print('Error during login: $e');
+      print('Unexpected error: $e');
       rethrow;
     }
   }
+}
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   Future<User?> getCurrentUser() async {

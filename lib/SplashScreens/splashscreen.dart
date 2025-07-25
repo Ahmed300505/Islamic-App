@@ -92,7 +92,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   void dispose() {
-    _timer?.cancel();
     _pageController.dispose();
     _animationController.dispose();
     super.dispose();
@@ -121,6 +120,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           isVerySmallScreen: isVerySmallScreen,
           isNarrowScreen: isNarrowScreen,
         ),
+      body: splashProvider.showSlider
+          ? _buildSliderScreen(
+        isSmallScreen: isSmallScreen,
+        isVerySmallScreen: isVerySmallScreen,
+        isNarrowScreen: isNarrowScreen,
+        screenHeight: screenHeight,
+        screenWidth: screenWidth,
+      )
+          : _buildSplashScreen(
+        isSmallScreen: isSmallScreen,
+        isVerySmallScreen: isVerySmallScreen,
+        isNarrowScreen: isNarrowScreen,
       ),
     );
   }

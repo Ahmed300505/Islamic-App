@@ -18,6 +18,7 @@ import 'package:islamicinstapp/screens/home_page.dart';
 import 'package:provider/provider.dart';
 import 'package:islamicinstapp/SplashScreens/splashscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:islamicinstapp/SplashScreens/splashscreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -102,3 +103,4 @@ class _AuthWrapperState extends State<AuthWrapper> {
     return _showSplash ? SplashScreen() : _initialRoute;
   }
 }
+
